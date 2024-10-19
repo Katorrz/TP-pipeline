@@ -30,5 +30,7 @@ jobs:
       - name: Archive linting results
         if: success()
         uses: actions/upload-artifact@v3
-
+        with:
+          name: eslint-results
+          path: eslint-results.sarif
 
