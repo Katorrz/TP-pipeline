@@ -25,7 +25,7 @@ jobs:
         run: npm install
         
       - name: Run Angular lint
-        run: npm run lint 
+        run: npx eslint . --format sarif --output-file eslint-results.sarif
 
       - name: Archive linting results
         if: success()
