@@ -1,55 +1,35 @@
-name: Angular CI and Deploy
-
-on:
+name: CI
+run-name: Linting Angular Code
+on: 
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
-  lint:
-    name: Lint Code
+  eslint:
+    name: Run ESLint on Angular Project
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Check out repository code
         uses: actions/checkout@v4
-
+        
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-
+          node-version: '20.18.0'
+      
       - name: Install dependencies
         run: npm install
+        
+      - name: Run Angular lint
+        run: npm run lint 
 
-      - name: Run ESLint
-        run: npm run lint
-
-  deploy:
-    name: Deploy to GitHub Pages
-    runs-on: ubuntu-latest
-    needs: lint
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Archive linting results
+        if: success()
+        uses: actions/upload-artifact@v3
         with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the Angular app
-        run: npm run build --prod
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/angular-hello-world  # Adapter le chemin du répertoire de build
+          name: eslint-results
+          path: eslint-results.sarif
